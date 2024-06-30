@@ -1,7 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+body {
+  height: 100vh;
+  min-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-image: url("/bg-2.jpg"); */
+  background-color: white;
+}
+
+.backdrop-blur {
+  -webkit-backdrop-filter: blur(19px);
+  backdrop-filter: blur(19px);
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+}
+
+.scrollbar-showing {
+  transition: opacity 0.5s ease;
+  opacity: 1;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
 }
