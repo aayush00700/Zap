@@ -2,7 +2,7 @@ import React from "react";
 
 const UserInfo = () => {
   return (
-    <div className="p-5 flex items-center justify-between">
+    <div className="px-3 py-4 flex items-center justify-between">
       <div className="flex items-center gap-5">
         <img
           src="./avatar.png"

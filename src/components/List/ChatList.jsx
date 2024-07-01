@@ -23,7 +23,7 @@ const ChatList = () => {
   return (
     <div
       ref={chatListRef}
-      className={`flex flex-col items-center gap-4 overflow-y-scroll ${
+      className={`flex flex-col items-center gap-2 overflow-y-scroll ${
         scrolling ? "scrollbar-showing" : "scrollbar-hidden"
       } scrollbar-custom w-full max-w-full`}
     >
@@ -48,7 +48,7 @@ const ChatList = () => {
           onClick={() => setAddMode((prev) => !prev)}
         />
       </div>
-      {[...Array(6)].map((_, index) => (
+      {[...Array(12)].map((_, index) => (
         <div
           key={index}
           className="item w-full flex items-center gap-5 p-2 cursor-pointer border-b-[1px] border-[#dddddd35] bg-transparent"
@@ -56,13 +56,13 @@ const ChatList = () => {
           <img
             src="./avatar.png"
             alt="Avatar.png"
-            className="w-[50px] h-[50px] ring-1 ring-gray-400 rounded-full"
+            className="w-[40px] h-[40px] ring-1 ring-gray-400 rounded-full"
           />
-          <div className="texts flex flex-col gap-[10px]">
-            <span className="font-semibold text-white text-sm">
-              Kanizah Baig
+          <div className="texts flex flex-col gap-1">
+            <span className="font-normal text-white text-[14px]">
+              Akshansh Singh
             </span>
-            <p className="font-normal text-white text-xs">Hello cutuu</p>
+            <p className="font-normal text-white text-[11px]">Hello </p>
           </div>
         </div>
       ))}
