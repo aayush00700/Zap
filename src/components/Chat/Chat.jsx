@@ -1,10 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
+import "../../index.css";
 
 const Chat = ({ className }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [messageInput, setMessageInput] = useState("");
+  //   const [scrolling, setScrolling] = useState(false);
   const emojiPickerRef = useRef(null);
+  //   const chatListRef = useRef(null);
+  //   const scrollTimeoutRef = useRef(null);
+
+  //   useEffect(() => {
+  //     const handleScroll = () => {
+  //       if (!scrolling) {
+  //         setScrolling(true);
+  //       }
+  //       clearTimeout(scrollTimeoutRef.current);
+  //       scrollTimeoutRef.current = setTimeout(() => {
+  //         setScrolling(false);
+  //       }, 2500);
+  //     };
+
+  //     const chatListElem = chatListRef.current;
+  //     chatListElem.addEventListener("scroll", handleScroll);
+
+  //     return () => {
+  //       chatListElem.removeEventListener("scroll", handleScroll);
+  //       clearTimeout(scrollTimeoutRef.current);
+  //     };
+  //   }, [scrolling]);
 
   const handleEmoji = (e) => {
     setMessageInput((prev) => prev + e.emoji);
@@ -45,7 +69,7 @@ const Chat = ({ className }) => {
           />
           <div className="texts flex flex-col gap-1">
             <span className="text-white text-base font-semibold">
-              Kanizah Baig
+              Akshansh Singh
             </span>
             <p className="text-[#a5a5a5] text-xs font-light">
               It's just life. It'll be over before you know it
@@ -66,16 +90,82 @@ const Chat = ({ className }) => {
           <img src="./info.png" alt="Info.png" className="w-[15px] h-[15px]" />
         </div>
       </div>
-      <div className="center flex-1">
-        <div className="message">
-          <img src="./avatar.png" alt="Avatar.png" className="" />
-          <div className="texts">
-            <p className="">
+      <div
+        className={`center p-3 flex-1 overflow-y-scroll scrollbar-custom w-full max-w-full flex flex-col gap-4`}
+      >
+        <div className="message-other max-w-[70%] flex gap-3">
+          <img
+            src="./avatar.png"
+            alt="Avatar.png"
+            className="w-[30px] h-[30px] rounded-full ring-1 ring-gray-300 object-cover"
+          />
+          <div className="texts flex-1 flex flex-col gap-1">
+            <p className="p-3 bg-[rgba(50,59,86,0.5)] rounded-md text-sm text-gray-300">
               Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia
               velit veniam aliquam voluptatibus repellendus itaque quod vitae ex
               mollitia omnis.
             </p>
+            <span className="text-gray-400 text-xs">1 min ago</span>
           </div>
+        </div>
+        <div className="message-own max-w-[70%] self-end">
+          <div className="texts ">
+            <p className="bg-blue-600 text-gray-300 rounded-md p-3 text-sm">
+              Lorem ipsum dolor
+            </p>
+          </div>
+          <span className="text-gray-400 text-xs">1 min ago</span>
+        </div>
+        <div className="message-other max-w-[70%] flex gap-3">
+          <img
+            src="./avatar.png"
+            alt="Avatar.png"
+            className="w-[30px] h-[30px] rounded-full ring-1 ring-gray-300 object-cover"
+          />
+          <div className="texts flex-1 flex flex-col gap-1">
+            <p className="p-3 bg-[rgba(50,59,86,0.5)] rounded-md text-sm text-gray-300">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia
+              velit veniam aliquam voluptatibus repellendus itaque quod vitae ex
+              mollitia omnis.
+            </p>
+            <span className="text-gray-400 text-xs">1 min ago</span>
+          </div>
+        </div>
+        <div className="message-own max-w-[70%] self-end">
+          <div className="texts ">
+            <img
+              src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="IMage.png"
+              className="w-full h-60 rounded-md mb-2"
+            />
+            <p className="bg-blue-600 text-gray-300 rounded-md p-3 text-sm">
+              Lorem ipsum dolor
+            </p>
+          </div>
+          <span className="text-gray-400 text-xs">1 min ago</span>
+        </div>
+        <div className="message-other max-w-[70%] flex gap-3">
+          <img
+            src="./avatar.png"
+            alt="Avatar.png"
+            className="w-[30px] h-[30px] rounded-full ring-1 ring-gray-300 object-cover"
+          />
+          <div className="texts flex-1 flex flex-col gap-1">
+            <p className="p-3 bg-[rgba(50,59,86,0.5)] rounded-md text-sm text-gray-300">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia
+              velit veniam aliquam voluptatibus repellendus itaque quod vitae ex
+              mollitia omnis.
+            </p>
+            <span className="text-gray-400 text-xs">1 min ago</span>
+          </div>
+        </div>
+        <div className="message-own max-w-[70%] self-end">
+          <div className="texts ">
+            <p className="bg-blue-600 text-gray-300 rounded-md p-3 text-sm">
+              Lorem ipsum dolor
+            </p>
+          </div>
+          <span className="text-gray-400 text-xs">1 min ago</span>
         </div>
       </div>
       <div className="bottom px-3 py-2 flex items-center justify-between border-t-[1px] border-[#dddddd35] relative">
