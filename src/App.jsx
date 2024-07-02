@@ -3,6 +3,7 @@ import List from "./components/List/List";
 import Chat from "./components/Chat/Chat";
 import Details from "./components/Details/Details";
 import Login from "./components/Login/Login";
+import Notification from "./components/Notification/Notification";
 
 const App = () => {
   const user = false;
@@ -18,6 +19,7 @@ const App = () => {
       ) : (
         <Login />
       )}
+      <Notification />
     </div>
   );
 };
