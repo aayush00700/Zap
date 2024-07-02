@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaUser } from "react-icons/fa6";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 const Login = () => {
   const [avatar, setAvatar] = useState({
@@ -18,11 +20,19 @@ const Login = () => {
     }
   };
 
+  const handleLogin = (e) => {
+    e.preventDefault();
+    toast.warn("Error while loggin in");
+  };
+
   return (
     <div className="login flex items-center h-[100%] w-full">
       <div className="item flex flex-col flex-1 items-center gap-4 ">
         <h2 className="text-gray-200 text-2xl font-semibold">Welcome back</h2>
-        <form className="flex flex-col items-center justify-center gap-4">
+        <form
+          onSubmit={handleLogin}
+          className="flex flex-col items-center justify-center gap-4"
+        >
           <div className="w-[250px] px-3 flex items-center bg-[rgba(50,59,86,0.5)]  rounded-md ">
             <FaUser className="text-gray-400" />
             <input
@@ -42,7 +52,7 @@ const Login = () => {
             />
           </div>
           <button className="text-gray-300 w-30 px-5 py-2 text-sm hover:bg-blue-700 font-medium border-none outline-none bg-[#1f8ef1] rounded-md cursor-pointer">
-            Sign in
+            Login
           </button>
         </form>
       </div>
@@ -106,6 +116,7 @@ const Login = () => {
           </button>
         </form>
       </div>
+      <ToastContainer />{" "}
     </div>
   );
 };
