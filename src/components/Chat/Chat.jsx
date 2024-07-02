@@ -5,30 +5,18 @@ import "../../index.css";
 const Chat = ({ className }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [messageInput, setMessageInput] = useState("");
-  //   const [scrolling, setScrolling] = useState(false);
   const emojiPickerRef = useRef(null);
-  //   const chatListRef = useRef(null);
-  //   const scrollTimeoutRef = useRef(null);
+  const endRef = useRef(null);
 
-  //   useEffect(() => {
-  //     const handleScroll = () => {
-  //       if (!scrolling) {
-  //         setScrolling(true);
-  //       }
-  //       clearTimeout(scrollTimeoutRef.current);
-  //       scrollTimeoutRef.current = setTimeout(() => {
-  //         setScrolling(false);
-  //       }, 2500);
-  //     };
+  // Initial scroll to the bottom on component mount
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
 
-  //     const chatListElem = chatListRef.current;
-  //     chatListElem.addEventListener("scroll", handleScroll);
-
-  //     return () => {
-  //       chatListElem.removeEventListener("scroll", handleScroll);
-  //       clearTimeout(scrollTimeoutRef.current);
-  //     };
-  //   }, [scrolling]);
+  // Scroll to the bottom when new messages are added
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  });
 
   const handleEmoji = (e) => {
     setMessageInput((prev) => prev + e.emoji);
@@ -167,6 +155,7 @@ const Chat = ({ className }) => {
           </div>
           <span className="text-gray-400 text-xs">1 min ago</span>
         </div>
+        <div ref={endRef}></div>
       </div>
       <div className="bottom px-3 py-2 flex items-center justify-between border-t-[1px] border-[#dddddd35] relative">
         <div className="icons-bottom flex gap-3">
@@ -202,14 +191,14 @@ const Chat = ({ className }) => {
             onClick={() => setShowEmojiPicker((prev) => !prev)}
           />
           {showEmojiPicker && (
-            <div ref={emojiPickerRef} className="absolute bottom-[110%] left-0">
+            <div ref={emojiPickerRef} className="absolute bottom-[150%] left-0">
               <EmojiPicker
                 className=""
                 height={400}
                 width={350}
                 open={showEmojiPicker}
                 onEmojiClick={handleEmoji}
-                theme="dark"
+                theme="auto"
               />
             </div>
           )}
