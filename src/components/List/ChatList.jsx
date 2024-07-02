@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const ChatList = () => {
-  const [addMode, setAddMode] = useState(false);
+const ChatList = ({ setModalIsOpen }) => {
   const [scrolling, setScrolling] = useState(false);
   const chatListRef = useRef(null);
 
@@ -42,10 +41,12 @@ const ChatList = () => {
           />
         </div>
         <img
-          src={addMode ? "./minus.png" : "./plus.png"}
+          src="./plus.png"
           alt="Plus.png"
           className="w-[36px] h-[36px] bg-[rgb(36,54,88)] opacity-50 p-[10px] rounded-md cursor-pointer"
-          onClick={() => setAddMode((prev) => !prev)}
+          onClick={() => {
+            setModalIsOpen((prev) => !prev);
+          }}
         />
       </div>
       {[...Array(12)].map((_, index) => (
