@@ -3,17 +3,22 @@ import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaUser } from "react-icons/fa6";
 import { toast, ToastContainer } from "react-toastify";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth, db } from "../../lib/firebase";
 import { setDoc, doc } from "firebase/firestore";
 import "react-toastify/dist/ReactToastify.css";
 import "../../index.css";
+import uploadFile from "../../lib/upload";
 
 const Login = () => {
   const [avatar, setAvatar] = useState({
     file: null,
     url: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleAvatar = (e) => {
     if (e.target.files[0]) {
@@ -24,24 +29,40 @@ const Login = () => {
     }
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    toast.warn("Error while logging in");
+    setLoading(true);
+
+    const formData = new FormData(e.target);
+    const { email, password } = Object.fromEntries(formData);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast.success("Login successful!");
+    } catch (err) {
+      //   console.log(err);
+      toast.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleRegister = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     const formData = new FormData(e.target);
-
     const { username, email, password } = Object.fromEntries(formData);
 
     try {
+      const imgUrl = await uploadFile(avatar.file);
+
       const res = await createUserWithEmailAndPassword(auth, email, password);
       await setDoc(doc(db, "users", res.user.uid), {
         username,
         email,
-        id: res.user.uid, // Corrected from res.user.id to res.user.uid
+        id: res.user.uid,
+        imgUrl,
         blocked: [],
       });
 
@@ -51,8 +72,10 @@ const Login = () => {
 
       toast.success("Account registered successfully!");
     } catch (err) {
-      console.log(err);
+      //   console.log(err);
       toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,8 +105,11 @@ const Login = () => {
               className="py-3 w-full bg-transparent border-none outline-none text-gray-300 font-light text-sm focus:ring-0"
             />
           </div>
-          <button className="text-gray-300 w-30 px-5 py-2 text-sm hover:bg-blue-700 font-medium border-none outline-none bg-[#1f8ef1] rounded-md cursor-pointer">
-            Login
+          <button
+            disabled={loading}
+            className="text-gray-300 w-30 px-5 py-2 text-sm hover:bg-blue-700 font-medium border-none outline-none bg-[#1f8ef1] rounded-md cursor-pointer disabled:cursor-not-allowed disabled:opacity-75"
+          >
+            {loading ? "Loading..." : "Login"}
           </button>
         </form>
       </div>
@@ -145,8 +171,11 @@ const Login = () => {
               className="py-3 w-full bg-transparent border-none outline-none text-gray-300 font-light text-sm focus:ring-0"
             />
           </div>
-          <button className="text-gray-300 w-30 px-5 py-2 text-sm hover:bg-blue-700 font-medium text border-none outline-none bg-[#1f8ef1] rounded-md cursor-pointer">
-            Register
+          <button
+            disabled={loading}
+            className="text-gray-300 w-30 px-5 py-2 text-sm hover:bg-blue-700 font-medium text border-none outline-none bg-[#1f8ef1] rounded-md cursor-pointer disabled:cursor-not-allowed disabled:opacity-75"
+          >
+            {loading ? "Loading" : "Register"}
           </button>
         </form>
       </div>
