@@ -1,11 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCBGvfq9xLMTNuD8zAhefc_CQ3eGN5CnIQ",
+  apiKey: import.meta.env.VITE_API_KEY,
   authDomain: "react-chat-site-3cc86.firebaseapp.com",
   projectId: "react-chat-site-3cc86",
   storageBucket: "react-chat-site-3cc86.appspot.com",
@@ -15,3 +15,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+export const auth = getAuth();
+export const db = getFirestore();
+export const storage = getStorage();

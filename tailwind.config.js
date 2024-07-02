@@ -8,6 +8,9 @@ export default {
         none: "none",
         blur: "blur(20px)",
       },
+      colors: {
+        inputGrey: "#2d3445",
+      },
     },
   },
   variants: {
