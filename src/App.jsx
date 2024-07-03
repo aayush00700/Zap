@@ -38,8 +38,6 @@ const App = () => {
     };
   }, [fetchUserInfo]);
 
-  // console.log(currentUser);
-
   if (isLoading)
     return (
       <div>
@@ -87,7 +85,6 @@ const App = () => {
         <Login />
       )}
       <Notification />
-      <ToastContainer position="bottom-right" />
     </div>
   );
 };

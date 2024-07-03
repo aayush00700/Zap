@@ -13,14 +13,8 @@ const Chat = ({ className }) => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  // Scroll to the bottom when new messages are added
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
-  });
-
   const handleEmoji = (e) => {
     setMessageInput((prev) => prev + e.emoji);
-    // setShowEmojiPicker(false);
   };
 
   const handleClickOutside = (event) => {

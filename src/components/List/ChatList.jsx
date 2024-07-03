@@ -17,36 +17,54 @@ const ChatList = ({ setModalIsOpen }) => {
     };
 
     const chatListElem = chatListRef.current;
-    chatListElem.addEventListener("scroll", handleScroll);
+    if (chatListElem) {
+      chatListElem.addEventListener("scroll", handleScroll);
+    }
 
     return () => {
-      chatListElem.removeEventListener("scroll", handleScroll);
+      if (chatListElem) {
+        chatListElem.removeEventListener("scroll", handleScroll);
+      }
     };
   }, []);
 
   useEffect(() => {
-    const unsub = onSnapshot(
+    if (!currentUser?.id) return;
+
+    const unSub = onSnapshot(
       doc(db, "userchats", currentUser.id),
       async (res) => {
-        const items = res.data().chats;
+        const data = res.data();
 
-        const promises = items.map(async (item) => {
-          const userDocRef = doc(db, "users", item.recieverId);
-          const userDocSnap = await getDoc(userDocRef);
+        if (!data || !data.chats) {
+          console.error("No chats data found");
+          setChats([]);
+          return;
+        }
 
-          const user = userDocSnap.data();
-          return { ...items, user };
-        });
+        const items = data.chats;
 
-        const chatData = await Promise.all(promises);
-        setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+        try {
+          const promises = items.map(async (item) => {
+            const userDocRef = doc(db, "users", item.receiverId);
+            const userDocSnap = await getDoc(userDocRef);
+            const user = userDocSnap.data();
+
+            return { ...item, user };
+          });
+
+          const chatData = await Promise.all(promises);
+          setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+        } catch (error) {
+          console.error("Error fetching chat data:", error);
+        }
       }
     );
 
     return () => {
-      unsub();
+      unSub();
     };
-  }, [currentUser.id]);
+  }, [currentUser?.id]);
 
   return (
     <div
@@ -78,21 +96,23 @@ const ChatList = ({ setModalIsOpen }) => {
           }}
         />
       </div>
-      {chats.map((_, index) => (
+      {chats.map((chat, index) => (
         <div
           key={index}
           className="item w-full flex items-center gap-5 p-2 cursor-pointer border-b-[1px] border-[#dddddd35] bg-transparent"
         >
           <img
-            src="./avatar.png"
+            src={chat.user.imgUrl || "./avatar.png"}
             alt="Avatar.png"
             className="w-[40px] h-[40px] ring-1 ring-gray-400 rounded-full"
           />
           <div className="texts flex flex-col gap-1">
             <span className="font-normal text-white text-[14px]">
-              Akshansh Singh
+              {chat?.user?.username || "Unknown User"}
             </span>
-            <p className="font-normal text-white text-[11px]">Hello </p>
+            <p className="font-normal text-white text-[11px]">
+              {chat?.lastMessage || "No messages yet"}
+            </p>
           </div>
         </div>
       ))}

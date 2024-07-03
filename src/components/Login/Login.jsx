@@ -12,6 +12,7 @@ import { auth, db } from "../../lib/firebase";
 import { setDoc, doc } from "firebase/firestore";
 import "../../index.css";
 import uploadFile from "../../lib/upload";
+import Notification from "../Notification/Notification";
 
 const Login = () => {
   const [avatar, setAvatar] = useState({
@@ -38,16 +39,26 @@ const Login = () => {
 
     if (!email) {
       toast.error("Email is required");
+      setLoading(false);
+      return;
     }
     if (!password) {
       toast.error("Password is required");
+      setLoading(false);
+      return;
     }
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast.success("Login successful!");
     } catch (err) {
-      toast.error(err);
+      if (err.code === "auth/invalid-credential") {
+        toast.error("User not found.");
+      } else if (err.code === "auth/wrong-password") {
+        toast.error("Incorrect password. Please try again.");
+      } else {
+        toast.error(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -198,7 +209,8 @@ const Login = () => {
           </button>
         </form>
       </div>
-      <ToastContainer position="bottom-right" />
+      {/* <ToastContainer position="bottom-right" /> */}
+      <Notification />
     </div>
   );
 };

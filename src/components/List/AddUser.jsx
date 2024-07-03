@@ -1,19 +1,23 @@
 import {
+  arrayUnion,
   collection,
   doc,
   getDocs,
   query,
   serverTimestamp,
   setDoc,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
 import { db } from "../../lib/firebase";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUserStore } from "../../lib/userStore";
 
 const AddUser = ({ closeModal }) => {
+  const { currentUser } = useUserStore();
   const [user, setUser] = useState(null);
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -50,6 +54,24 @@ const AddUser = ({ closeModal }) => {
         createdOn: serverTimestamp(),
         messages: [],
       });
+
+      await updateDoc(doc(userChatsRef, user.id), {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: currentUser.id,
+          updatedAt: Date.now(),
+        }),
+      });
+
+      await updateDoc(doc(userChatsRef, currentUser.id), {
+        chats: arrayUnion({
+          chatId: newChatRef.id,
+          lastMessage: "",
+          receiverId: user.id,
+          updatedAt: Date.now(),
+        }),
+      });
     } catch (err) {
       console.log(err);
     }
@@ -78,7 +100,10 @@ const AddUser = ({ closeModal }) => {
             />
             <span className="text-slate-100">{user.username}</span>
           </div>
-          <button className="px-2 py-1 border-md bg-sky-500 text-slate-100 border-none cursor-pointer rounded-md active:bg-sky-600">
+          <button
+            onClick={handleAdd}
+            className="px-2 py-1 border-md bg-sky-500 text-slate-100 border-none cursor-pointer rounded-md active:bg-sky-600"
+          >
             Add user
           </button>
         </div>
