@@ -2,8 +2,6 @@ import { signOut } from "firebase/auth";
 import React from "react";
 import { auth } from "../../lib/firebase";
 import { useUserStore } from "../../lib/userStore";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const Details = ({ className }) => {
   const { currentUser } = useUserStore();
@@ -12,7 +10,7 @@ const Details = ({ className }) => {
     <div className={`${className} h-[100%]`}>
       <div className="user px-7 py-4 flex flex-col items-center gap-1 border-b-[1px] border-[#dddddd35]">
         <img
-          src="./avatar.png"
+          src={currentUser.imgUrl || "./avatar.png"}
           alt=""
           className="h-[80px] w-[80px] ring-1 ring-gray-200 rounded-full"
         />

@@ -36,11 +36,17 @@ const Login = () => {
     const formData = new FormData(e.target);
     const { email, password } = Object.fromEntries(formData);
 
+    if (!email) {
+      toast.error("Email is required");
+    }
+    if (!password) {
+      toast.error("Password is required");
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast.success("Login successful!");
     } catch (err) {
-      //   console.log(err);
       toast.error(err);
     } finally {
       setLoading(false);
@@ -54,7 +60,21 @@ const Login = () => {
     const formData = new FormData(e.target);
     const { username, email, password } = Object.fromEntries(formData);
 
+    if (!email) {
+      toast.error("Email is required");
+    }
+    if (!password) {
+      toast.error("Password is required");
+    }
+    if (!username) {
+      toast.error("Username is required");
+    }
+
     try {
+      if (!avatar.file) {
+        toast.error("Please upload an avatar");
+      }
+
       const imgUrl = await uploadFile(avatar.file);
 
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -72,7 +92,6 @@ const Login = () => {
 
       toast.success("Account registered successfully!");
     } catch (err) {
-      //   console.log(err);
       toast.error(err.message);
     } finally {
       setLoading(false);
@@ -179,7 +198,7 @@ const Login = () => {
           </button>
         </form>
       </div>
-      <ToastContainer />
+      <ToastContainer position="bottom-right" />
     </div>
   );
 };

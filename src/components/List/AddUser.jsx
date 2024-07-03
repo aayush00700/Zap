@@ -1,10 +1,36 @@
-import React from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
+import { db } from "../../lib/firebase";
 
 const AddUser = ({ closeModal }) => {
+  const [user, setUser] = useState(null);
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const username = formData.get("username");
+
+    try {
+      const userRef = collection(db, "users");
+
+      const q = query(userRef, where("username", "==", username));
+
+      const querySnapShot = await getDocs(q);
+
+      if (!querySnapShot) {
+        setUser(querySnapShot.docs[0].data());
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      console.log("Done with search");
+    }
+  };
+
   return (
     <div className="AddUser relative p-6 bg-slate-800 rounded-md w-max h-max">
-      <form action="" className="flex gap-4">
+      <form onSubmit={handleSearch} className="flex gap-4">
         <input
           type="text"
           placeholder="Username"
@@ -15,19 +41,21 @@ const AddUser = ({ closeModal }) => {
           Search
         </button>
       </form>
-      <div className="user mt-6 flex items-center justify-between ">
-        <div className="detail flex items-center gap-4">
-          <img
-            src="./avatar.png"
-            alt=""
-            className="w-9 h-9 rounded-full object-cover "
-          />
-          <span className="text-slate-100">Akshansh Singh</span>
+      {user && (
+        <div className="user mt-6 flex items-center justify-between ">
+          <div className="detail flex items-center gap-4">
+            <img
+              src={user.avatar || "./avatar.png"}
+              alt="Avatar.png"
+              className="w-9 h-9 rounded-full object-cover "
+            />
+            <span className="text-slate-100">{user.username}</span>
+          </div>
+          <button className="px-2 py-1 border-md bg-sky-500 text-slate-100 border-none cursor-pointer rounded-md active:bg-sky-600">
+            Add user
+          </button>
         </div>
-        <button className="px-2 py-1 border-md bg-sky-500 text-slate-100 border-none cursor-pointer rounded-md active:bg-sky-600">
-          Add user
-        </button>
-      </div>
+      )}
       <button
         onClick={closeModal}
         className="p-[3px] rounded-full bg-transparent absolute top-0 right-0"
