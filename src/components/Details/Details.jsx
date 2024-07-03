@@ -1,6 +1,13 @@
+import { signOut } from "firebase/auth";
 import React from "react";
+import { auth } from "../../lib/firebase";
+import { useUserStore } from "../../lib/userStore";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Details = ({ className }) => {
+  const { currentUser } = useUserStore();
+
   return (
     <div className={`${className} h-[100%]`}>
       <div className="user px-7 py-4 flex flex-col items-center gap-1 border-b-[1px] border-[#dddddd35]">
@@ -9,7 +16,9 @@ const Details = ({ className }) => {
           alt=""
           className="h-[80px] w-[80px] ring-1 ring-gray-200 rounded-full"
         />
-        <h2 className="text-xl font-semibold text-gray-300">Akshansh Singh</h2>
+        <h2 className="text-xl font-semibold text-gray-300">
+          {currentUser.username}
+        </h2>
         <p className="text-gray-300 font-light text-sm ">
           In valor, there is hope.
         </p>
@@ -90,7 +99,10 @@ const Details = ({ className }) => {
         <button className="px-1 py-2 text-sm font-medium bg-red-600 text-white border-none rounded-full cursor-pointer hover:bg-red-700 active:scale-95 transition-all ease-in-out">
           Block user
         </button>
-        <button className="px-1 py-2 text-sm font-medium bg-red-600 text-white border-none rounded-full cursor-pointer hover:bg-red-700 active:scale-95 transition-all ease-in-out ">
+        <button
+          onClick={() => auth.signOut()}
+          className="px-1 py-2 text-sm font-medium bg-red-600 text-white border-none rounded-full cursor-pointer hover:bg-red-700 active:scale-95 transition-all ease-in-out "
+        >
           Logout
         </button>
       </div>
