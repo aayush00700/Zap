@@ -11,6 +11,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { useUserStore } from "./lib/userStore";
 import MoonLoader from "react-spinners/MoonLoader";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 Modal.setAppElement("#root");
 
@@ -35,6 +37,8 @@ const App = () => {
       unSub();
     };
   }, [fetchUserInfo]);
+
+  // console.log(currentUser);
 
   if (isLoading)
     return (
@@ -83,6 +87,7 @@ const App = () => {
         <Login />
       )}
       <Notification />
+      <ToastContainer position="bottom-right" />
     </div>
   );
 };

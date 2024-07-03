@@ -1,7 +1,12 @@
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import React, { useState, useEffect, useRef } from "react";
+import { db } from "../../lib/firebase";
+import { useUserStore } from "../../lib/userStore";
 
 const ChatList = ({ setModalIsOpen }) => {
   const [scrolling, setScrolling] = useState(false);
+  const [chats, setChats] = useState([]);
+  const { currentUser } = useUserStore();
   const chatListRef = useRef(null);
 
   useEffect(() => {
@@ -18,6 +23,30 @@ const ChatList = ({ setModalIsOpen }) => {
       chatListElem.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    const unsub = onSnapshot(
+      doc(db, "userchats", currentUser.id),
+      async (res) => {
+        const items = res.data().chats;
+
+        const promises = items.map(async (item) => {
+          const userDocRef = doc(db, "users", item.recieverId);
+          const userDocSnap = await getDoc(userDocRef);
+
+          const user = userDocSnap.data();
+          return { ...items, user };
+        });
+
+        const chatData = await Promise.all(promises);
+        setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+      }
+    );
+
+    return () => {
+      unsub();
+    };
+  }, [currentUser.id]);
 
   return (
     <div
@@ -49,7 +78,7 @@ const ChatList = ({ setModalIsOpen }) => {
           }}
         />
       </div>
-      {[...Array(12)].map((_, index) => (
+      {chats.map((_, index) => (
         <div
           key={index}
           className="item w-full flex items-center gap-5 p-2 cursor-pointer border-b-[1px] border-[#dddddd35] bg-transparent"
