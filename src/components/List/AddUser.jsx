@@ -1,4 +1,12 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
 import { db } from "../../lib/firebase";
@@ -26,6 +34,22 @@ const AddUser = ({ closeModal }) => {
       if (querySnapShot.empty) {
         toast.error("User not found");
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleAdd = async () => {
+    const chatRef = collection(db, "chats");
+    const userChatsRef = collection(db, "userchats");
+
+    try {
+      const newChatRef = doc(chatRef);
+
+      await setDoc(newChatRef, {
+        createdOn: serverTimestamp(),
+        messages: [],
+      });
     } catch (err) {
       console.log(err);
     }
