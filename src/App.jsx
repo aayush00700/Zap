@@ -6,13 +6,17 @@ import Login from "./components/Login/Login";
 import Notification from "./components/Notification/Notification";
 import Modal from "react-modal";
 import AddUser from "./components/List/AddUser";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./lib/firebase";
+import { useUserStore } from "./lib/userStore";
+import MoonLoader from "react-spinners/MoonLoader";
 
 Modal.setAppElement("#root");
 
 const App = () => {
-  const user = false;
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const { currentUser, isLoading, fetchUserInfo } = useUserStore();
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -22,9 +26,26 @@ const App = () => {
     setModalIsOpen(false);
   };
 
+  useEffect(() => {
+    const unSub = onAuthStateChanged(auth, (user) => {
+      fetchUserInfo(user?.uid);
+    });
+
+    return () => {
+      unSub();
+    };
+  }, [fetchUserInfo]);
+
+  if (isLoading)
+    return (
+      <div>
+        <MoonLoader color="#000000" size={40} loading={isLoading} />
+      </div>
+    );
+
   return (
     <div className=" w-[90vw] h-[90vh] bg-[rgb(17,25,40)] opacity-90 rounded-lg border-[1px] border-white border-opacity-15 flex">
-      {user ? (
+      {currentUser ? (
         <>
           <List
             className="w-[25%]"

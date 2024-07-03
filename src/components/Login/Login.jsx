@@ -3,13 +3,13 @@ import { MdOutlineDriveFileRenameOutline } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaUser } from "react-icons/fa6";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth, db } from "../../lib/firebase";
 import { setDoc, doc } from "firebase/firestore";
-import "react-toastify/dist/ReactToastify.css";
 import "../../index.css";
 import uploadFile from "../../lib/upload";
 
