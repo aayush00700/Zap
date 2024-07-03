@@ -2,6 +2,8 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
 import { db } from "../../lib/firebase";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddUser = ({ closeModal }) => {
   const [user, setUser] = useState(null);
@@ -14,17 +16,18 @@ const AddUser = ({ closeModal }) => {
     try {
       const userRef = collection(db, "users");
 
-      const q = query(userRef, where("username", "==", username));
+      const q = query(userRef, where("username", "==", username.trim()));
 
       const querySnapShot = await getDocs(q);
 
-      if (!querySnapShot) {
+      if (!querySnapShot.empty) {
         setUser(querySnapShot.docs[0].data());
+      }
+      if (querySnapShot.empty) {
+        toast.error("User not found");
       }
     } catch (err) {
       console.log(err);
-    } finally {
-      console.log("Done with search");
     }
   };
 
@@ -45,7 +48,7 @@ const AddUser = ({ closeModal }) => {
         <div className="user mt-6 flex items-center justify-between ">
           <div className="detail flex items-center gap-4">
             <img
-              src={user.avatar || "./avatar.png"}
+              src={user.imgUrl || "./avatar.png"}
               alt="Avatar.png"
               className="w-9 h-9 rounded-full object-cover "
             />
