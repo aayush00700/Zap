@@ -1,12 +1,14 @@
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import React, { useState, useEffect, useRef } from "react";
 import { db } from "../../lib/firebase";
 import { useUserStore } from "../../lib/userStore";
+import { useChatStore } from "../../lib/chatStore";
 
 const ChatList = ({ setModalIsOpen }) => {
   const [scrolling, setScrolling] = useState(false);
   const [chats, setChats] = useState([]);
   const { currentUser } = useUserStore();
+  const { changeChat } = useChatStore();
   const chatListRef = useRef(null);
 
   useEffect(() => {
@@ -66,6 +68,30 @@ const ChatList = ({ setModalIsOpen }) => {
     };
   }, [currentUser?.id]);
 
+  const handleSelect = async (chat) => {
+    const userChats = chats.map((item) => {
+      const { user, ...rest } = item;
+      return rest;
+    });
+
+    const chatIndex = userChats.findIndex(
+      (item) => item.chatId === chat.chatId
+    );
+
+    userChats[chatIndex].isSeen = true;
+
+    const userChatsRef = doc(db, "userchats", currentUser.id);
+
+    try {
+      await updateDoc(userChatsRef, {
+        chats: userChats,
+      });
+      changeChat(chat.chatId, chat.user);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div
       ref={chatListRef}
@@ -98,8 +124,11 @@ const ChatList = ({ setModalIsOpen }) => {
       </div>
       {chats.map((chat, index) => (
         <div
+          onClick={() => handleSelect(chat)}
           key={index}
-          className="item w-full flex items-center gap-5 p-2 cursor-pointer border-b-[1px] border-[#dddddd35] bg-transparent"
+          className={`item w-full flex items-center gap-5 p-2 cursor-pointer border-b-[1px] border-[#dddddd35] ${
+            chat?.isSeen ? "bg-transparent" : "bg-[#5183fe]"
+          }`}
         >
           <img
             src={chat.user.imgUrl || "./avatar.png"}

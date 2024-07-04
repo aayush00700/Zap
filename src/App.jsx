@@ -6,19 +6,21 @@ import Login from "./components/Login/Login";
 import Notification from "./components/Notification/Notification";
 import Modal from "react-modal";
 import AddUser from "./components/List/AddUser";
+import SelectionSvg from "../public/selection.svg";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
 import { useUserStore } from "./lib/userStore";
 import MoonLoader from "react-spinners/MoonLoader";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useChatStore } from "./lib/chatStore";
 
 Modal.setAppElement("#root");
 
 const App = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
+  const { chatId } = useChatStore();
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -56,8 +58,15 @@ const App = () => {
             openModal={openModal}
             closeModal={closeModal}
           />
-          <Chat className="w-[50%]" />
-          <Details className="w-[25%]" />
+          {chatId && <Chat className="w-[50%]" />}
+          {chatId && <Details className="w-[25%]" />}
+          {!chatId && (
+            <div className="w-[75%] h-[100%] flex flex-col gap-5 items-center justify-center border-l-[1px] border-slate-600">
+              <img src={SelectionSvg} alt="" className="w-[350px]" />
+              <p className="text-lg text-slate-300">Select a chat</p>
+            </div>
+          )}
+
           <Modal
             className="border-2 border-slate-200 absolute rounded-md"
             isOpen={modalIsOpen}

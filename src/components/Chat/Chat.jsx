@@ -1,17 +1,55 @@
 import React, { useState, useEffect, useRef } from "react";
 import EmojiPicker from "emoji-picker-react";
 import "../../index.css";
+import {
+  arrayUnion,
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { useChatStore } from "../../lib/chatStore";
+import { useUserStore } from "../../lib/userStore";
 
 const Chat = ({ className }) => {
+  const [chat, setChat] = useState();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [messageInput, setMessageInput] = useState("");
+  const [img, setImg] = useState({
+    file: null,
+    fileUrl: "",
+  });
   const emojiPickerRef = useRef(null);
   const endRef = useRef(null);
+  const { chatId, user } = useChatStore();
+  const { currentUser } = useUserStore();
 
-  // Initial scroll to the bottom on component mount
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
+
+  useEffect(() => {
+    const unSub = onSnapshot(doc(db, "chats", chatId), (res) => {
+      setChat(res.data());
+    });
+
+    return () => {
+      unSub();
+    };
+  }, [chatId]);
+
+  useEffect(() => {
+    if (showEmojiPicker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   const handleEmoji = (e) => {
     setMessageInput((prev) => prev + e.emoji);
@@ -26,17 +64,46 @@ const Chat = ({ className }) => {
     }
   };
 
-  useEffect(() => {
-    if (showEmojiPicker) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
+  const handleSend = async () => {
+    if (messageInput === "") return;
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showEmojiPicker]);
+    try {
+      await updateDoc(doc(db, "chats", chatId), {
+        messages: arrayUnion({
+          senderId: currentUser.id,
+          messageInput,
+          createdAt: new Date(),
+        }),
+      });
+
+      const userIDs = [currentUser.id, user.id];
+
+      userIDs.forEach(async (id) => {
+        const userChatRef = doc(db, "userchats", id);
+        const userChatSnapshot = await getDoc(userChatRef);
+
+        if (userChatSnapshot.exists()) {
+          const userChatData = userChatSnapshot.data();
+
+          const chatIndex = userChatData.chats.findIndex(
+            (c) => c.chatId === chatId
+          );
+
+          userChatData.chats[chatIndex].lastMessage = messageInput;
+          userChatData.chats[chatIndex].isSeen =
+            id === currentUser.id ? true : false;
+          userChatData.chats[chatIndex].updatedAt = Date.now();
+
+          await updateDoc(userChatRef, {
+            chats: userChatData.chats,
+          });
+        }
+      });
+      setMessageInput("");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div
@@ -75,80 +142,24 @@ const Chat = ({ className }) => {
       <div
         className={`center p-3 flex-1 overflow-y-scroll scrollbar-custom w-full max-w-full flex flex-col gap-4`}
       >
-        <div className="message-other max-w-[70%] flex gap-3">
-          <img
-            src="./avatar.png"
-            alt="Avatar.png"
-            className="w-[30px] h-[30px] rounded-full ring-1 ring-gray-300 object-cover"
-          />
-          <div className="texts flex-1 flex flex-col gap-1">
-            <p className="p-3 bg-[rgba(50,59,86,0.5)] rounded-md text-sm text-gray-300">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia
-              velit veniam aliquam voluptatibus repellendus itaque quod vitae ex
-              mollitia omnis.
-            </p>
+        {chat?.messages?.map((message, index) => (
+          <div className="message-own max-w-[70%] self-end" key={index}>
+            <div className="texts ">
+              {message.img && (
+                <img
+                  src={message.img}
+                  alt="IMage.png"
+                  className="w-full h-60 rounded-md mb-2"
+                />
+              )}
+              <p className="bg-blue-600 text-slate-200 rounded-md p-3 text-sm">
+                {message.messageInput}
+              </p>
+            </div>
             <span className="text-gray-400 text-xs">1 min ago</span>
           </div>
-        </div>
-        <div className="message-own max-w-[70%] self-end">
-          <div className="texts ">
-            <p className="bg-blue-600 text-gray-300 rounded-md p-3 text-sm">
-              Lorem ipsum dolor
-            </p>
-          </div>
-          <span className="text-gray-400 text-xs">1 min ago</span>
-        </div>
-        <div className="message-other max-w-[70%] flex gap-3">
-          <img
-            src="./avatar.png"
-            alt="Avatar.png"
-            className="w-[30px] h-[30px] rounded-full ring-1 ring-gray-300 object-cover"
-          />
-          <div className="texts flex-1 flex flex-col gap-1">
-            <p className="p-3 bg-[rgba(50,59,86,0.5)] rounded-md text-sm text-gray-300">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia
-              velit veniam aliquam voluptatibus repellendus itaque quod vitae ex
-              mollitia omnis.
-            </p>
-            <span className="text-gray-400 text-xs">1 min ago</span>
-          </div>
-        </div>
-        <div className="message-own max-w-[70%] self-end">
-          <div className="texts ">
-            <img
-              src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="IMage.png"
-              className="w-full h-60 rounded-md mb-2"
-            />
-            <p className="bg-blue-600 text-gray-300 rounded-md p-3 text-sm">
-              Lorem ipsum dolor
-            </p>
-          </div>
-          <span className="text-gray-400 text-xs">1 min ago</span>
-        </div>
-        <div className="message-other max-w-[70%] flex gap-3">
-          <img
-            src="./avatar.png"
-            alt="Avatar.png"
-            className="w-[30px] h-[30px] rounded-full ring-1 ring-gray-300 object-cover"
-          />
-          <div className="texts flex-1 flex flex-col gap-1">
-            <p className="p-3 bg-[rgba(50,59,86,0.5)] rounded-md text-sm text-gray-300">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia
-              velit veniam aliquam voluptatibus repellendus itaque quod vitae ex
-              mollitia omnis.
-            </p>
-            <span className="text-gray-400 text-xs">1 min ago</span>
-          </div>
-        </div>
-        <div className="message-own max-w-[70%] self-end">
-          <div className="texts ">
-            <p className="bg-blue-600 text-gray-300 rounded-md p-3 text-sm">
-              Lorem ipsum dolor
-            </p>
-          </div>
-          <span className="text-gray-400 text-xs">1 min ago</span>
-        </div>
+        ))}
+
         <div ref={endRef}></div>
       </div>
       <div className="bottom px-3 py-2 flex items-center justify-between border-t-[1px] border-[#dddddd35] relative">
@@ -175,6 +186,11 @@ const Chat = ({ className }) => {
           placeholder="Type your message..."
           value={messageInput}
           onChange={(e) => setMessageInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSend();
+            }
+          }}
         />
 
         <div className="emoji relative">
@@ -197,7 +213,10 @@ const Chat = ({ className }) => {
             </div>
           )}
         </div>
-        <button className="sendbutton px-3 py-2 bg-[#5183fe] text-sm rounded-md font-medium ml-3 text-white border-none cursor-pointer">
+        <button
+          onClick={handleSend}
+          className="sendbutton px-3 py-2 bg-[#5183fe] text-sm rounded-md font-medium ml-3 text-white border-none cursor-pointer hover:ring-1 hover:ring-slate-200"
+        >
           Send
         </button>
       </div>
