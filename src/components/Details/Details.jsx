@@ -34,7 +34,7 @@ const Details = ({ className }) => {
           className="h-[80px] w-[80px] ring-1 ring-gray-200 rounded-full"
         />
         <h2 className="text-xl font-semibold text-gray-300">
-          {currentUser?.username || "Username"}
+          {currentUser?.username || "User"}
         </h2>
         <p className="text-gray-300 font-light text-sm ">
           In valor, there is hope.

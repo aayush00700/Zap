@@ -130,13 +130,13 @@ const Chat = ({ className }) => {
       <div className="top p-3 flex items-center justify-between border-b-[1px] border-[#dddddd35]">
         <div className="user flex items-center gap-5">
           <img
-            src={user.imgUrl || "./avatar.png"}
+            src={user?.imgUrl || "./avatar.png"}
             alt="User.png"
             className="w-[45px] h-[45px] rounded-full ring-1 ring-gray-300 object-cover"
           />
           <div className="texts flex flex-col gap-1">
             <span className="text-white text-base font-semibold">
-              {user.username || "Username"}
+              {user?.username || "User"}
             </span>
             <p className="text-[#a5a5a5] text-xs font-light">
               It's just life. It'll be over before you know it
@@ -236,7 +236,7 @@ const Chat = ({ className }) => {
           className="flex text-white flex-1 bg-transparent border-none outline-none text-xs focus:outline-none focus:border-none focus:ring-0 disabled:cursor-not-allowed"
           placeholder={
             isCurrentUserBlocked || isReceiverBlocked
-              ? "You are not allowed to send message"
+              ? "You cannot send a message"
               : "Type your message..."
           }
           value={messageInput}

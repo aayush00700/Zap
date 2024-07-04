@@ -6,6 +6,7 @@ import { useChatStore } from "../../lib/chatStore";
 
 const ChatList = ({ setModalIsOpen }) => {
   const [scrolling, setScrolling] = useState(false);
+  const [input, setInput] = useState("");
   const [chats, setChats] = useState([]);
   const { currentUser } = useUserStore();
   const { changeChat } = useChatStore();
@@ -92,6 +93,10 @@ const ChatList = ({ setModalIsOpen }) => {
     }
   };
 
+  const filterChats = chats.filter((c) =>
+    c.user.username.toLowerCase().includes(input.toLowerCase())
+  );
+
   return (
     <div
       ref={chatListRef}
@@ -109,8 +114,9 @@ const ChatList = ({ setModalIsOpen }) => {
           <input
             type="text"
             name="search"
-            className="bg-transparent outline-none border-none text-white h-[25px] placeholder:text-slate-200 placeholder:font-light placeholder:text-xs w-full"
+            className="bg-transparent outline-none border-none focus:border-none focus:outline-none active:border-none active:outline-none text-white h-[25px] placeholder:text-slate-200 placeholder:font-light placeholder:text-xs w-full"
             placeholder="Search"
+            onChange={(e) => setInput(e.target.value)}
           />
         </div>
         <img
@@ -122,7 +128,7 @@ const ChatList = ({ setModalIsOpen }) => {
           }}
         />
       </div>
-      {chats.map((chat, index) => (
+      {filterChats.map((chat, index) => (
         <div
           onClick={() => handleSelect(chat)}
           key={index}
@@ -131,13 +137,19 @@ const ChatList = ({ setModalIsOpen }) => {
           }`}
         >
           <img
-            src={chat.user.imgUrl || "./avatar.png"}
+            src={
+              chat.user.blocked.includes(currentUser.id)
+                ? "./avatar.png"
+                : chat?.user?.imgUrl
+            }
             alt="Avatar.png"
             className="w-[40px] h-[40px] ring-1 ring-gray-400 rounded-full"
           />
           <div className="texts flex flex-col gap-1">
             <span className="font-normal text-white text-[14px]">
-              {chat?.user?.username || "Unknown User"}
+              {chat.user.blocked.includes(currentUser.id)
+                ? "User"
+                : chat?.user?.username}
             </span>
             <p className="font-normal text-white text-[11px]">
               {chat?.lastMessage || "No messages yet"}

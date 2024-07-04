@@ -178,7 +178,7 @@ const Login = () => {
             />
             <input
               type="text"
-              placeholder="Username"
+              placeholder="User"
               name="username"
               className="py-3 w-full bg-transparent border-none outline-none text-gray-300 font-light text-sm focus:ring-0"
             />

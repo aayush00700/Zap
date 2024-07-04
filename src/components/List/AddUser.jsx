@@ -82,7 +82,7 @@ const AddUser = ({ closeModal }) => {
       <form onSubmit={handleSearch} className="flex gap-4">
         <input
           type="text"
-          placeholder="Username"
+          placeholder="User"
           name="username"
           className="px-4 w-[250px] rounded-md border-none outline-none text-sm placeholder:text-slate-600"
         />

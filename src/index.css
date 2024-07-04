@@ -33,7 +33,9 @@ body {
   scroll-behavior: smooth;
 }
 
-input:focus {
+input:focus,
+input:active,
+input:enabled {
   outline: none;
   box-shadow: none;
   border: none;
