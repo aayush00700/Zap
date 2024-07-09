@@ -78,7 +78,7 @@ const App = () => {
     );
 
   return (
-    <div className="w-[90vw] h-[90vh] bg-[rgb(17,25,40)] opacity-90 rounded-lg border-[1px] border-white border-opacity-15 flex relative">
+    <div className="w-[90vw] h-[90vh] bg-[rgb(17,25,40)] backdrop-blur-md opacity-95 rounded-lg border-[1px] border-white border-opacity-15 flex relative">
       {currentUser ? (
         <>
           <List

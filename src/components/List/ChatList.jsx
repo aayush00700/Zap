@@ -40,7 +40,6 @@ const ChatList = ({ setModalIsOpen }) => {
         const data = res.data();
 
         if (!data || !data.chats) {
-          console.error("No chats data found");
           setChats([]);
           return;
         }

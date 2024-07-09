@@ -8,7 +8,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth, db } from "../../lib/firebase";
+import { auth, db, provider } from "../../lib/firebase";
+import { signInWithPopup } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import "../../index.css";
 import uploadFile from "../../lib/upload";
@@ -20,6 +21,34 @@ const Login = () => {
     url: "",
   });
   const [loading, setLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      await signInWithPopup(auth, provider).then(async (result) => {
+        const user = result.user;
+        console.log(user);
+
+        await setDoc(doc(db, "users", user.uid), {
+          username: user.displayName,
+          email: user.email,
+          id: user.uid,
+          imgUrl: user.photoURL,
+          blocked: [],
+        });
+
+        await setDoc(doc(db, "userchats", user.uid), {
+          chats: [],
+        });
+
+        toast.success("Account registered successfully!");
+      });
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleAvatar = (e) => {
     if (e.target.files[0]) {
@@ -208,6 +237,16 @@ const Login = () => {
             {loading ? "Loading" : "Register"}
           </button>
         </form>
+        <span className="text-gray-200 text-sm">Or</span>
+        <button
+          onClick={handleGoogleSignIn}
+          className="px-4 py-2  rounded-full bg-slate-500 flex gap-2 items-center"
+        >
+          <p className="text-sm text-gray-200 font-semibold">
+            SignIn with Google
+          </p>
+          <img src="./Google.png" alt="" className="w-[20px] h-[20px]" />
+        </button>
       </div>
       {/* <ToastContainer position="bottom-right" /> */}
       <Notification />
