@@ -13,7 +13,7 @@ import { useChatStore } from "../../lib/chatStore";
 import { useUserStore } from "../../lib/userStore";
 import uploadFile from "../../lib/upload";
 
-const Chat = ({ className }) => {
+const Chat = ({ className, handleOpenDetails }) => {
   const [chat, setChat] = useState();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [messageInput, setMessageInput] = useState("");
@@ -145,16 +145,11 @@ const Chat = ({ className }) => {
         </div>
         <div className="icons flex gap-3">
           <img
-            src="./phone.png"
-            alt="Phone.png"
-            className="w-[15px] h-[15px]"
+            onClick={handleOpenDetails}
+            src="./info.png"
+            alt="Info.png"
+            className="w-[18px] h-[18px] cursor-pointer"
           />
-          <img
-            src="./video.png"
-            alt="Video.png"
-            className="w-[15px] h-[15px]"
-          />
-          <img src="./info.png" alt="Info.png" className="w-[15px] h-[15px]" />
         </div>
       </div>
       <div

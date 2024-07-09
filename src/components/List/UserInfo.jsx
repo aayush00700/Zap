@@ -14,23 +14,6 @@ const UserInfo = () => {
         />
         <h2 className="text-white">{currentUser.username}</h2>
       </div>
-      <div className="flex gap-3">
-        <img
-          src="./more.png"
-          alt=""
-          className="cursor-pointer w-[15px] h-[15px]"
-        />
-        <img
-          src="./video.png"
-          alt=""
-          className="cursor-pointer w-[15px] h-[15px]"
-        />
-        <img
-          src="./edit.png"
-          alt=""
-          className="cursor-pointer w-[15px] h-[15px]"
-        />
-      </div>
     </div>
   );
 };
