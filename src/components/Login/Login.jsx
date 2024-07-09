@@ -22,12 +22,20 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  const handleAvatar = (e) => {
+    if (e.target.files[0]) {
+      setAvatar({
+        file: e.target.files[0],
+        url: URL.createObjectURL(e.target.files[0]),
+      });
+    }
+  };
+
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
       await signInWithPopup(auth, provider).then(async (result) => {
         const user = result.user;
-        console.log(user);
 
         await setDoc(doc(db, "users", user.uid), {
           username: user.displayName,
@@ -50,12 +58,15 @@ const Login = () => {
     }
   };
 
-  const handleAvatar = (e) => {
-    if (e.target.files[0]) {
-      setAvatar({
-        file: e.target.files[0],
-        url: URL.createObjectURL(e.target.files[0]),
-      });
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      await signInWithPopup(auth, provider);
+      toast.success("Login successful!");
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -171,6 +182,16 @@ const Login = () => {
             {loading ? "Loading..." : "Login"}
           </button>
         </form>
+        <span className="text-gray-200 text-sm">Or</span>
+        <button
+          onClick={handleGoogleLogin}
+          className="px-4 py-2  rounded-full bg-slate-500 flex gap-2 items-center"
+        >
+          <p className="text-sm text-gray-200 font-semibold">
+            Login with Google
+          </p>
+          <img src="./Google.png" alt="" className="w-[20px] h-[20px]" />
+        </button>
       </div>
       <div className="seperator h-[100%] w-[1px] bg-[#dddddd35] "></div>
       <div className="item flex flex-col flex-1 items-center gap-4">

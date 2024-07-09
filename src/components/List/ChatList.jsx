@@ -113,7 +113,7 @@ const ChatList = ({ setModalIsOpen }) => {
           <input
             type="text"
             name="search"
-            className="bg-transparent outline-none border-none focus:border-none focus:outline-none active:border-none active:outline-none text-white h-[25px] placeholder:text-slate-200 placeholder:font-light placeholder:text-xs w-full"
+            className="bg-transparent outline-none border-none focus:border-none focus:outline-none active:border-none active:outline-none text-white h-[25px] placeholder:text-slate-200 placeholder:font-light placeholder:text-xs w-full text-xs"
             placeholder="Search"
             onChange={(e) => setInput(e.target.value)}
           />
