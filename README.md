@@ -62,8 +62,8 @@ LinkUp is a real-time messaging application built using React, Tailwind CSS, Fir
 
 1. **Clone the repository**:
    ```
-   git clone https://github.com/your-username/linkup-chat.git
-   cd linkup-chat
+   git clone https://github.com/aayush00700/Zap.git
+   cd Zap
    ```
 
 2. **Install dependencies**:
